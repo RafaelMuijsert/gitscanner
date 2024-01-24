@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "gitscanner"
+version = "0.1.0"
+description = "Scan project groups for open Git repositories."
+authors = ["Rafael Alexander Muijsert <rafael@muijsert.org>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.31"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
