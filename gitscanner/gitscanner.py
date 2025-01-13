@@ -1,86 +1,81 @@
 #!/usr/bin/env python3
+"""Scans each project group for open Git repositories.
+
+Copyright (C) 2025
 """
-Scans each project group for open Git repositories.
-"""
+
 import argparse
 import json
 import logging
+import sys
+from pathlib import Path
 
 import requests
 
-SCHEME = "http://"
-POSTFIX = ".webtech-uva.nl/"
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
-def git_exposed(url):
-    """
-    Checks whether the site located at URL contains an exposed Git repository.
+def git_exposed(url: str) -> bool:
+    """Check whether the site located at URL contains an exposed Git repository.
 
-    Parameters:
+    Arguments:
         url (str): The URL which should be checked. Must end with a /.
 
     Returns:
+    -------
         bool: True if the URL contains an exposed repository, otherwise False.
+
     """
     try:
         response = requests.get(url + ".git", timeout=1)
-        return response.status_code == 200
     except requests.RequestException as err:
-        logging.debug(err)
+        logger.debug(err)
         return False
+    else:
+        return response.ok
 
 
-def load_groups(file_path):
-    """
-    Loads each project group from a JSON file.
+def load_urls(file_path: str) -> list[str]:
+    """Load URLs from a JSON file.
 
-    Parameters:
+    Arguments:
         file_path (str): The path to the JSON file containing each group.
 
     Returns:
-        dict: A dictionary in the form group->members.
+        list: A list containing all URLs.
+
     """
-    with open(file_path, "r", encoding="utf-8") as file:
-        return json.load(file)
+    with Path(file_path).open(encoding="utf-8") as file:
+        contents: list[str] = json.load(file)
+        return contents
 
 
-def get_exposed_repositories(groups):
-    """
-    Gets each exposed repository from a dictionary of groups.
+def get_exposed_repositories(urls: list[str]) -> list[str]:
+    """Get each exposed repository from a dictionary of groups.
 
-    Parameters:
-        groups (dict): A dictionary in the form group->members
+    Arguments:
+        urls (dict): A dictionary in the form group->members
 
     Returns:
         list: A list containing the URLs of exposed repositories from groups.
+
     """
-    exposed = []
-    for group in groups:
-        # Check whether the root URL contains a Git repo
-        base = SCHEME + group + POSTFIX
-        if git_exposed(base):
-            exposed.append(base)
-
-        for person in groups[group]:
-            url = f"{base}~{person}/"
-            if git_exposed(url):
-                exposed.append(url)
-
+    exposed: list[str] = [url for url in urls if git_exposed(url)]
     return exposed
 
 
-def main():
-    """
-    Evaluates each URL combination
-    """
-    parser = argparse.ArgumentParser(description="Scan for exposed Git repo's")
-    parser.add_argument("filename")
+def main() -> None:
+    """Evaluate each URL combination."""
+    parser = argparse.ArgumentParser(description="Scan for exposed Git repos")
+    _ = parser.add_argument("filename")
     args = parser.parse_args()
 
-    groups = load_groups(args.filename)
-    exposed_repositories = get_exposed_repositories(groups)
+    file_name: str = args.filename  # pyright: ignore[reportAny]
+    urls = load_urls(file_name)
+    exposed_repositories = get_exposed_repositories(urls)
     for url in exposed_repositories:
-        print(url)
+        _ = sys.stdout.write(url + "\n")
 
 
 if __name__ == "__main__":
