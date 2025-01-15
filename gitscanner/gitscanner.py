@@ -23,7 +23,6 @@ def git_exposed(url: str) -> bool:
         url (str): The URL which should be checked. Must end with a /.
 
     Returns:
-    -------
         bool: True if the URL contains an exposed repository, otherwise False.
 
     """
@@ -33,6 +32,7 @@ def git_exposed(url: str) -> bool:
         logger.debug(err)
         return False
     else:
+        logger.info("%s: %s", url, str(response.ok))
         return response.ok
 
 
