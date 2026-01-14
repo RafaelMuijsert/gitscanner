@@ -3,10 +3,17 @@ name = "gitscanner"
 version = "0.1.0"
 description = "Scan project groups for open Git repositories."
 readme = "README.md"
+authors = [
+    { name = "Rafael Alexander Muijsert", email = "rafael@muijsert.org" }
+]
 requires-python = ">=3.13"
-dependencies = []
-
+dependencies = [
+    "requests>=2.32.5",
+]
 
 [project.scripts]
 gitscanner = "gitscanner.gitscanner:main"
 
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
