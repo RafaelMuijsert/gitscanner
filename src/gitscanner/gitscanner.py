@@ -29,7 +29,10 @@ def git_exposed(url: str, timeout: float = DEFAULT_TIMEOUT) -> bool:
 
     """
     try:
-        response = requests.get(url + ".git", timeout=timeout)
+        response = requests.get(
+            url + ".git" if url.endswith("/") else url + "/.git",
+            timeout=timeout,
+        )
     except requests.RequestException as err:
         logger.debug(err)
         return False

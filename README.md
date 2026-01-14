@@ -17,7 +17,7 @@ python3 src/gitscanner/gitscanner.py urls.json
 
 ## JSON File Format
 
-The JSON file should contain a single list of strings, where each string is a URL to be scanned. The URL must end with a `/`.
+The JSON file should contain a single list of strings, where each string is a URL to be scanned. 
 
 ### Example `urls.json`
 
