@@ -34,7 +34,7 @@ def git_exposed(url: str, timeout: float = DEFAULT_TIMEOUT) -> bool:
         logger.debug(err)
         return False
     else:
-        logger.info("%s: %s", url, str(response.ok))
+        logger.info("%s: %s", url, response.ok)
         return response.ok
 
 
